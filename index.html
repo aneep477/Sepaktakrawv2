@@ -216,7 +216,7 @@
     }
     .criterion-desc { font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 8px; display: block; }
 
-    /* SEGMENTED BUTTONS */
+    /* SEGMENTED BUTTONS (CEMERLANG, SEDERHANA, LEMAH) */
     .segmented-group { display: flex; gap: 6px; }
     .seg-btn { flex: 1; display: block; cursor: pointer; position: relative; }
     .seg-btn input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
@@ -246,7 +246,7 @@
       box-shadow: 0 3px 8px rgba(239, 68, 68, 0.25);
     }
 
-    /* GRID PERCUBAAN */
+    /* GRID PERCUBAAN 1 & 2 */
     .attempts-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -363,17 +363,6 @@
     .report-table th, .report-table td { border: 1px solid #000; padding: 5px 7px; text-align: left; }
     .report-table th { background: #f1f5f9; font-weight: bold; }
 
-    /* HEADER SURAT KESELURUHAN KELAS (RAW DATA) */
-    .official-header {
-      display: none;
-      text-align: center;
-      margin-bottom: 15px;
-      font-family: 'Times New Roman', serif;
-    }
-    .official-header h2 { font-size: 1.1rem; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; }
-    .official-header h3 { font-size: 0.95rem; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; }
-    .official-header p { font-size: 0.85rem; font-weight: bold; margin-top: 4px; }
-
     @media (max-width: 850px) {
       body { display: block; }
       .app-layout { display: block; }
@@ -390,7 +379,6 @@
       .report-sheet { padding: 0; border-radius: 0; }
       .dashboard-card { border: none !important; box-shadow: none !important; padding: 0 !important; }
       #printSignatures { display: flex !important; }
-      .official-header { display: block !important; }
     }
   </style>
 </head>
@@ -428,7 +416,7 @@
             <i class="fa-solid fa-chart-pie"></i> 3. Profil & Spider Radar
           </button>
           <button id="btn-tab-rawamali" onclick="switchTab('rawamali')">
-            <i class="fa-solid fa-table-list"></i> 4. Raw Data Amali Kelas
+            <i class="fa-solid fa-table-list"></i> 4. Raw Data Amali (Excel/PDF)
           </button>
         </nav>
       </div>
@@ -865,33 +853,18 @@
         </div>
       </div>
 
-      <!-- TAB 4: JADUAL RAW DATA AMALI KESELURUHAN KELAS -->
+      <!-- TAB 4: JADUAL RAW DATA AMALI KESELURUHAN KELAS & RUANGAN TANDATANGAN PENGESAHAN -->
       <div id="sec-rawamali" class="dashboard-card hidden">
         <div class="card-header card-form">
           <h3><i class="fa-solid fa-table-list" style="color: var(--primary);"></i> Jadual Raw Data Kemahiran Amali Keseluruhan Kelas (/60)</h3>
           <div style="display: flex; gap: 8px;">
-            <button onclick="loadRawAmaliData()" class="btn-action" style="width: auto; margin-top:0; padding:8px 16px; background:#0284c7; font-size:0.8rem;">
-              <i class="fa-solid fa-rotate"></i> Muat Semula Data
-            </button>
             <button onclick="downloadRawAmaliCSV()" class="btn-action" style="width: auto; margin-top:0; padding:8px 16px; background:#15803d; font-size:0.8rem;">
               <i class="fa-solid fa-file-excel"></i> Muat Turun CSV (Excel)
             </button>
             <button onclick="window.print()" class="btn-action btn-print" style="width: auto; margin-top:0; padding:8px 16px; background:#1e40af; font-size:0.8rem;">
-              <i class="fa-solid fa-file-pdf"></i> Cetak Borang Raw Data Kelas
+              <i class="fa-solid fa-file-pdf"></i> Cetak / Simpan PDF
             </button>
           </div>
-        </div>
-
-        <!-- KEPALA SURAT RASMI KHUSUS UNTUK CETAKAN PDF -->
-        <div class="official-header">
-          <h2>INSTITUT PENDIDIKAN GURU KAMPUS DARULAMAN</h2>
-          <h3>BORANG RAW DATA KEMAHIRAN AMALI (PENILAI 1 & PENILAI 2)</h3>
-          <p>KURSUS: MPU3421 KOKURIKULUM - PERMAINAN (SEPAK TAKRAW)</p>
-        </div>
-
-        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: bold; margin-bottom: 8px; padding: 0 4px;" class="meta-info-bar">
-          <span id="lblClassUnit">Unit / Kelas: PISMP (SEM / PISMP)</span>
-          <span id="lblTotalPelajar">Jumlah Pelajar: 0 Orang</span>
         </div>
 
         <div style="overflow-x: auto;">
@@ -902,19 +875,19 @@
                 <th rowspan="2" style="border:1px solid #000; padding:8px;">Angka Giliran</th>
                 <th rowspan="2" style="border:1px solid #000; padding:8px;">Nama Pelajar</th>
                 <th rowspan="2" style="border:1px solid #000; padding:8px;">Unit</th>
-                <th colspan="4" style="border:1px solid #000; padding:6px; background:#e0f2fe; color:#0369a1;">PENILAI 1 (P1)</th>
-                <th colspan="4" style="border:1px solid #000; padding:6px; background:#fef3c7; color:#b45309;">PENILAI 2 (P2)</th>
-                <th rowspan="2" style="border:1px solid #000; padding:8px; background:#dcfce7; color:#15803d;">PURATA MARKAH (/60)</th>
+                <th colspan="4" style="border:1px solid #000; padding:6px; background:#e0f2fe; color:#0369a1;">Penilai 1 (P1)</th>
+                <th colspan="4" style="border:1px solid #000; padding:6px; background:#fef3c7; color:#b45309;">Penilai 2 (P2)</th>
+                <th rowspan="2" style="border:1px solid #000; padding:8px; background:#dcfce7; color:#15803d;">Purata Markah (/60)</th>
               </tr>
               <tr style="text-align: center;">
-                <th style="border:1px solid #000; padding:4px; background:#f0f9ff;">Servis</th>
-                <th style="border:1px solid #000; padding:4px; background:#f0f9ff;">Mengumpan</th>
-                <th style="border:1px solid #000; padding:4px; background:#f0f9ff;">Menanduk</th>
-                <th style="border:1px solid #000; padding:4px; background:#e0f2fe; font-weight:bold;">Jumlah P1</th>
-                <th style="border:1px solid #000; padding:4px; background:#fffbeb;">Servis</th>
-                <th style="border:1px solid #000; padding:4px; background:#fffbeb;">Mengumpan</th>
-                <th style="border:1px solid #000; padding:4px; background:#fffbeb;">Menanduk</th>
-                <th style="border:1px solid #000; padding:4px; background:#fef3c7; font-weight:bold;">Jumlah P2</th>
+                <th style="border:1px solid #000; padding:4px; background:#f0f9ff;">Servis (/20)</th>
+                <th style="border:1px solid #000; padding:4px; background:#f0f9ff;">Mengumpan (/20)</th>
+                <th style="border:1px solid #000; padding:4px; background:#f0f9ff;">Menanduk (/20)</th>
+                <th style="border:1px solid #000; padding:4px; background:#e0f2fe; font-weight:bold;">Jumlah P1 (/60)</th>
+                <th style="border:1px solid #000; padding:4px; background:#fffbeb;">Servis (/20)</th>
+                <th style="border:1px solid #000; padding:4px; background:#fffbeb;">Mengumpan (/20)</th>
+                <th style="border:1px solid #000; padding:4px; background:#fffbeb;">Menanduk (/20)</th>
+                <th style="border:1px solid #000; padding:4px; background:#fef3c7; font-weight:bold;">Jumlah P2 (/60)</th>
               </tr>
             </thead>
             <tbody id="tbodyRawAmali">
@@ -924,7 +897,7 @@
         </div>
 
         <!-- RUANGAN TANDATANGAN PENGESAHAN PENILAI 1, PENILAI 2 & KETUA UNIT KOKURIKULUM -->
-        <div style="margin-top: 35px; display: none; justify-content: space-between; page-break-inside: avoid; font-family: 'Times New Roman', serif;" id="printSignatures">
+        <div style="margin-top: 35px; display: none; justify-content: space-between; page-break-inside: avoid;" id="printSignatures">
           <div style="text-align: center; width: 30%;">
             <p>....................................................</p>
             <p><b>Tandatangan Penilai 1 (P1)</b></p>
@@ -989,6 +962,7 @@
       return await res.json();
     }
 
+    // SEMAK & AMBIL MARKAH TERSIMPAN SECARA LIVE UNTUK AMALI
     async function onPelajarAmaliChange() {
       const ag = document.getElementById('selectPelajarAmali').value;
       const role = document.getElementById('evaluatorRole').value;
@@ -1018,6 +992,7 @@
       }
     }
 
+    // SEMAK & AMBIL MARKAH TERSIMPAN SECARA LIVE UNTUK SIMULASI
     async function onPelajarSimulasiChange() {
       const ag = document.getElementById('selectPelajarSimulasi').value;
       const role = document.getElementById('evaluatorRole').value;
@@ -1315,4 +1290,154 @@
 
         document.getElementById('rptP2H2').innerText = data.simulasi.p2H2;
         document.getElementById('rptP2H5').innerText = data.simulasi.p2H5;
-        document.getElementById('rptP2SimJ').innerText = data
+        document.getElementById('rptP2SimJ').innerText = data.simulasi.p2J + ' / 40';
+
+        document.getElementById('rptWajaran40').innerText = `${data.simulasi.wajaran40}%`;
+        document.getElementById('kpiSimulasi').innerText = `${data.simulasi.wajaran40}%`;
+      } else {
+        document.getElementById('rptWajaran40').innerText = 'Belum Dinilai';
+        document.getElementById('kpiSimulasi').innerText = '0%';
+      }
+
+      const amaliW = data.amali ? Number(data.amali.wajaran60) : 0;
+      const simW = data.simulasi ? Number(data.simulasi.wajaran40) : 0;
+      const total100 = (amaliW + simW).toFixed(1);
+
+      document.getElementById('rptJumlah100').innerText = `${total100}%`;
+      document.getElementById('kpiTotal').innerText = `${total100}%`;
+
+      renderRadarChart([sVal, uVal, tVal, h2Val, h5Val]);
+    }
+
+    function renderRadarChart(scores) {
+      const ctx = document.getElementById('radarChart').getContext('2d');
+      if (radarChartInstance) radarChartInstance.destroy();
+
+      radarChartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['Servis (20M)', 'Mengumpan (20M)', 'Menanduk (20M)', 'HPP2 Kognitif (20M)', 'HPP5 Komunikasi (20M)'],
+          datasets: [{
+            label: 'Profil Kemahiran',
+            data: scores,
+            backgroundColor: 'rgba(34, 197, 94, 0.25)',
+            borderColor: '#16a34a',
+            pointBackgroundColor: '#15803d',
+            pointBorderColor: '#ffffff',
+            pointHoverBackgroundColor: '#ffffff',
+            pointHoverBorderColor: '#15803d',
+            borderWidth: 2.5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              min: 0,
+              max: 20,
+              ticks: { stepSize: 5, font: { size: 9, weight: 'bold' } },
+              pointLabels: { font: { size: 10, weight: 'bold' }, color: '#334155' }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    // FUNGSI JAVASCRIPT MEMUATKAN RAW DATA AMALI & PREVENSI RALAT FOREACH
+    async function loadRawAmaliData() {
+      const tbody = document.getElementById('tbodyRawAmali');
+      tbody.innerHTML = '<tr><td colspan="13" style="text-align:center; padding:15px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuatkan Raw Data Keseluruhan Kelas...</td></tr>';
+      
+      try {
+        const data = await apiGet('getRawAmali');
+        if (Array.isArray(data)) {
+          rawAmaliCacheData = data;
+          renderRawAmaliTable(data);
+        } else {
+          tbody.innerHTML = `<tr><td colspan="13" style="text-align:center; color:red; padding:15px;">Ralat daripada Pelayan: ${data.error || 'Gagal memuatkan data. Sila pastikan anda membuat New Deployment.'}</td></tr>`;
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="13" style="text-align:center; color:red; padding:15px;">Ralat Sambungan: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderRawAmaliTable(data) {
+      const tbody = document.getElementById('tbodyRawAmali');
+      if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="13" style="text-align:center; padding:15px;">Tiada data pelajar dijumpai.</td></tr>';
+        return;
+      }
+
+      let html = '';
+      data.forEach((p, idx) => {
+        html += `
+          <tr style="text-align:center; ${idx % 2 === 0 ? 'background:#ffffff;' : 'background:#f8fafc;'}">
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.bil}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:600;">${p.angkaGiliran}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px; text-align:left;">${p.nama}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.unit}</td>
+
+            <!-- MARKAH P1 -->
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.p1.servis}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.p1.umpan}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.p1.tanduk}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold; background:#f0f9ff; color:#0369a1;">${p.p1.wujud ? p.p1.jumlah : '-'}</td>
+
+            <!-- MARKAH P2 -->
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.p2.servis}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.p2.umpan}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.p2.tanduk}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold; background:#fffbeb; color:#b45309;">${p.p2.wujud ? p.p2.jumlah : '-'}</td>
+
+            <!-- PURATA AMALI (/60) -->
+            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold; background:#dcfce7; color:#15803d; font-size:0.9rem;">${p.purata}</td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    function downloadRawAmaliCSV() {
+      if (!rawAmaliCacheData || rawAmaliCacheData.length === 0) {
+        alert("Tiada data untuk dimuat turun.");
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+      csvContent += "Bil,Angka Giliran,Nama Pelajar,Unit,P1 Servis (/20),P1 Mengumpan (/20),P1 Menanduk (/20),P1 Jumlah (/60),P2 Servis (/20),P2 Mengumpan (/20),P2 Menanduk (/20),P2 Jumlah (/60),Purata Markah Akhir (/60)\n";
+
+      rawAmaliCacheData.forEach(p => {
+        let row = [
+          `"${p.bil}"`,
+          `"${p.angkaGiliran}"`,
+          `"${p.nama}"`,
+          `"${p.unit}"`,
+          `"${p.p1.servis}"`,
+          `"${p.p1.umpan}"`,
+          `"${p.p1.tanduk}"`,
+          `"${p.p1.wujud ? p.p1.jumlah : '-'}"`,
+          `"${p.p2.servis}"`,
+          `"${p.p2.umpan}"`,
+          `"${p.p2.tanduk}"`,
+          `"${p.p2.wujud ? p.p2.jumlah : '-'}"`,
+          `"${p.purata}"`
+        ].join(",");
+        csvContent += row + "\n";
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "Raw_Data_Amali_MPU3421_Keseluruhan_Kelas.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>
