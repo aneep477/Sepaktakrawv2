@@ -372,10 +372,12 @@
       main.main-wrapper { padding: 12px; }
     }
 
+    /* TETAPAN PRINT CETAK / PDF */
     @media print {
-      aside.sidebar, .top-bar-mobile, .card-form, .btn-print, .uploader-box { display: none !important; }
-      main.main-wrapper { padding: 0; }
+      aside.sidebar, .top-bar-mobile, .card-form, .btn-print, .uploader-box, .btn-action { display: none !important; }
+      main.main-wrapper { padding: 0; width: 100%; max-width: 100%; }
       .report-sheet { padding: 0; border-radius: 0; }
+      .dashboard-card { border: none !important; box-shadow: none !important; padding: 0 !important; }
     }
   </style>
 </head>
@@ -411,6 +413,9 @@
           </button>
           <button id="btn-tab-dashboard" onclick="switchTab('dashboard')">
             <i class="fa-solid fa-chart-pie"></i> 3. Profil & Spider Radar
+          </button>
+          <button id="btn-tab-rawamali" onclick="switchTab('rawamali')">
+            <i class="fa-solid fa-table-list"></i> 4. Raw Data Amali (Excel/PDF)
           </button>
         </nav>
       </div>
@@ -847,6 +852,50 @@
         </div>
       </div>
 
+      <!-- TAB 4: JADUAL RAW DATA AMALI KESELURUHAN KELAS -->
+      <div id="sec-rawamali" class="dashboard-card hidden">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-table-list" style="color: var(--primary);"></i> Jadual Raw Data Kemahiran Amali Keseluruhan Kelas (/60)</h3>
+          <div style="display: flex; gap: 8px;">
+            <button onclick="downloadRawAmaliCSV()" class="btn-action" style="width: auto; margin-top:0; padding:8px 16px; background:#15803d; font-size:0.8rem;">
+              <i class="fa-solid fa-file-excel"></i> Muat Turun CSV (Excel)
+            </button>
+            <button onclick="window.print()" class="btn-action btn-print" style="width: auto; margin-top:0; padding:8px 16px; background:#1e40af; font-size:0.8rem;">
+              <i class="fa-solid fa-file-pdf"></i> Cetak / Simpan PDF
+            </button>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="report-table" id="tableRawAmali" style="width:100%; border-collapse:collapse; font-size:0.8rem;">
+            <thead>
+              <tr style="background-color: #f1f5f9; text-align: center;">
+                <th rowspan="2" style="border:1px solid #cbd5e1; padding:8px;">Bil</th>
+                <th rowspan="2" style="border:1px solid #cbd5e1; padding:8px;">Angka Giliran</th>
+                <th rowspan="2" style="border:1px solid #cbd5e1; padding:8px;">Nama Pelajar</th>
+                <th rowspan="2" style="border:1px solid #cbd5e1; padding:8px;">Unit</th>
+                <th colspan="4" style="border:1px solid #cbd5e1; padding:6px; background:#e0f2fe; color:#0369a1;">Penilai 1 (P1)</th>
+                <th colspan="4" style="border:1px solid #cbd5e1; padding:6px; background:#fef3c7; color:#b45309;">Penilai 2 (P2)</th>
+                <th rowspan="2" style="border:1px solid #cbd5e1; padding:8px; background:#dcfce7; color:#15803d;">Purata Markah (/60)</th>
+              </tr>
+              <tr style="text-align: center;">
+                <th style="border:1px solid #cbd5e1; padding:4px; background:#f0f9ff;">Servis (/20)</th>
+                <th style="border:1px solid #cbd5e1; padding:4px; background:#f0f9ff;">Mengumpan (/20)</th>
+                <th style="border:1px solid #cbd5e1; padding:4px; background:#f0f9ff;">Menanduk (/20)</th>
+                <th style="border:1px solid #cbd5e1; padding:4px; background:#e0f2fe; font-weight:bold;">Jumlah P1 (/60)</th>
+                <th style="border:1px solid #cbd5e1; padding:4px; background:#fffbeb;">Servis (/20)</th>
+                <th style="border:1px solid #cbd5e1; padding:4px; background:#fffbeb;">Mengumpan (/20)</th>
+                <th style="border:1px solid #cbd5e1; padding:4px; background:#fffbeb;">Menanduk (/20)</th>
+                <th style="border:1px solid #cbd5e1; padding:4px; background:#fef3c7; font-weight:bold;">Jumlah P2 (/60)</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyRawAmali">
+              <tr><td colspan="13" style="text-align:center; padding:15px;">Sila pilih menu ini untuk memuatkan raw data amali...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </main>
   </div>
 
@@ -854,6 +903,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbxLFpYRZ6uplbfHYCIqq-0FdcWxUWfvt0rDaCPNdzVughBAFKUwn_E-h97tSFoPCaGmSg/exec";
 
     let rawPelajarList = [];
+    let rawAmaliCacheData = [];
     let radarChartInstance = null;
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -1065,10 +1115,20 @@
       document.getElementById('btn-tab-amali').classList.toggle('active', tab === 'amali');
       document.getElementById('btn-tab-simulasi').classList.toggle('active', tab === 'simulasi');
       document.getElementById('btn-tab-dashboard').classList.toggle('active', tab === 'dashboard');
+      if (document.getElementById('btn-tab-rawamali')) {
+        document.getElementById('btn-tab-rawamali').classList.toggle('active', tab === 'rawamali');
+      }
 
       document.getElementById('sec-amali').classList.toggle('hidden', tab !== 'amali');
       document.getElementById('sec-simulasi').classList.toggle('hidden', tab !== 'simulasi');
       document.getElementById('sec-dashboard').classList.toggle('hidden', tab !== 'dashboard');
+      if (document.getElementById('sec-rawamali')) {
+        document.getElementById('sec-rawamali').classList.toggle('hidden', tab !== 'rawamali');
+      }
+
+      if (tab === 'rawamali') {
+        loadRawAmaliData();
+      }
 
       if (window.innerWidth <= 850) {
         document.getElementById('sidebarMenu').classList.remove('open');
@@ -1265,6 +1325,98 @@
           }
         }
       });
+    }
+
+    // FUNGSI JAVASCRIPT MEMUATKAN RAW DATA AMALI & PREVENSI RALAT FOREACH
+    async function loadRawAmaliData() {
+      const tbody = document.getElementById('tbodyRawAmali');
+      tbody.innerHTML = '<tr><td colspan="13" style="text-align:center; padding:15px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuatkan Raw Data Keseluruhan Kelas...</td></tr>';
+      
+      try {
+        const data = await apiGet('getRawAmali');
+        if (Array.isArray(data)) {
+          rawAmaliCacheData = data;
+          renderRawAmaliTable(data);
+        } else {
+          tbody.innerHTML = `<tr><td colspan="13" style="text-align:center; color:red; padding:15px;">Ralat daripada Pelayan: ${data.error || 'Gagal memuatkan data. Sila pastikan anda membuat New Deployment.'}</td></tr>`;
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="13" style="text-align:center; color:red; padding:15px;">Ralat Sambungan: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderRawAmaliTable(data) {
+      const tbody = document.getElementById('tbodyRawAmali');
+      if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="13" style="text-align:center; padding:15px;">Tiada data pelajar dijumpai.</td></tr>';
+        return;
+      }
+
+      let html = '';
+      data.forEach((p, idx) => {
+        html += `
+          <tr style="text-align:center; ${idx % 2 === 0 ? 'background:#ffffff;' : 'background:#f8fafc;'}">
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.bil}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:600;">${p.angkaGiliran}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px; text-align:left;">${p.nama}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.unit}</td>
+
+            <!-- MARKAH P1 -->
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.p1.servis}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.p1.umpan}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.p1.tanduk}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold; background:#f0f9ff; color:#0369a1;">${p.p1.wujud ? p.p1.jumlah : '-'}</td>
+
+            <!-- MARKAH P2 -->
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.p2.servis}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.p2.umpan}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px;">${p.p2.tanduk}</td>
+            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold; background:#fffbeb; color:#b45309;">${p.p2.wujud ? p.p2.jumlah : '-'}</td>
+
+            <!-- PURATA AMALI (/60) -->
+            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold; background:#dcfce7; color:#15803d; font-size:0.9rem;">${p.purata}</td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    function downloadRawAmaliCSV() {
+      if (!rawAmaliCacheData || rawAmaliCacheData.length === 0) {
+        alert("Tiada data untuk dimuat turun.");
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+      csvContent += "Bil,Angka Giliran,Nama Pelajar,Unit,P1 Servis (/20),P1 Mengumpan (/20),P1 Menanduk (/20),P1 Jumlah (/60),P2 Servis (/20),P2 Mengumpan (/20),P2 Menanduk (/20),P2 Jumlah (/60),Purata Markah Akhir (/60)\n";
+
+      rawAmaliCacheData.forEach(p => {
+        let row = [
+          `"${p.bil}"`,
+          `"${p.angkaGiliran}"`,
+          `"${p.nama}"`,
+          `"${p.unit}"`,
+          `"${p.p1.servis}"`,
+          `"${p.p1.umpan}"`,
+          `"${p.p1.tanduk}"`,
+          `"${p.p1.wujud ? p.p1.jumlah : '-'}"`,
+          `"${p.p2.servis}"`,
+          `"${p.p2.umpan}"`,
+          `"${p.p2.tanduk}"`,
+          `"${p.p2.wujud ? p.p2.jumlah : '-'}"`,
+          `"${p.purata}"`
+        ].join(",");
+        csvContent += row + "\n";
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "Raw_Data_Amali_MPU3421_Keseluruhan_Kelas.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   </script>
 </body>
