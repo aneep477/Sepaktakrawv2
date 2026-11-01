@@ -216,7 +216,7 @@
     }
     .criterion-desc { font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 8px; display: block; }
 
-    /* SEGMENTED BUTTONS (CEMERLANG, SEDERHANA, LEMAH TANPA MARKAH) */
+    /* SEGMENTED BUTTONS (CEMERLANG, SEDERHANA, LEMAH) */
     .segmented-group { display: flex; gap: 6px; }
     .seg-btn { flex: 1; display: block; cursor: pointer; position: relative; }
     .seg-btn input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
@@ -416,7 +416,7 @@
       </div>
 
       <div class="sidebar-footer">
-        <p>Dashboard Pentaksiran v3.6</p>
+        <p>Dashboard Pentaksiran v4.0 (Live)</p>
         <p>© IPG Kampus Darulaman</p>
       </div>
     </aside>
@@ -441,7 +441,7 @@
 
         <div class="form-group">
           <label class="field-label"><i class="fa-solid fa-user-graduate"></i> Pilih Pelajar Dari Google Sheet</label>
-          <select id="selectPelajarAmali" class="input-field" onchange="resetAmaliForm()" required><option value="">-- Memuatkan Pelajar... --</option></select>
+          <select id="selectPelajarAmali" class="input-field" onchange="onPelajarAmaliChange()" required><option value="">-- Memuatkan Pelajar... --</option></select>
         </div>
 
         <form id="formAmali" onsubmit="handleAmaliSubmit(event)">
@@ -618,7 +618,7 @@
 
         <div class="form-group">
           <label class="field-label"><i class="fa-solid fa-user-graduate"></i> Pilih Pelajar Dari Google Sheet</label>
-          <select id="selectPelajarSimulasi" class="input-field" onchange="resetSimulasiForm()" required><option value="">-- Memuatkan Pelajar... --</option></select>
+          <select id="selectPelajarSimulasi" class="input-field" onchange="onPelajarSimulasiChange()" required><option value="">-- Memuatkan Pelajar... --</option></select>
         </div>
 
         <form id="formSimulasi" onsubmit="handleSimulasiSubmit(event)">
@@ -892,6 +892,60 @@
       return await res.json();
     }
 
+    // SEMAK & AMBIL MARKAH TERSIMPAN SECARA LIVE UNTUK AMALI
+    async function onPelajarAmaliChange() {
+      const ag = document.getElementById('selectPelajarAmali').value;
+      const role = document.getElementById('evaluatorRole').value;
+      if (!ag) {
+        resetAmaliForm();
+        return;
+      }
+
+      try {
+        const res = await apiGet('getMarkahSaved', { angkaGiliran: ag, role: role });
+        if (res && res.amali) {
+          document.getElementById('servis_p1').value = res.amali.servis_p1;
+          document.getElementById('servis_p2').value = res.amali.servis_p2;
+          document.getElementById('umpan_p1').value = res.amali.umpan_p1;
+          document.getElementById('umpan_p2').value = res.amali.umpan_p2;
+          document.getElementById('tanduk_p1').value = res.amali.tanduk_p1;
+          document.getElementById('tanduk_p2').value = res.amali.tanduk_p2;
+          calculateAmaliScore();
+          if (res.amali.justifikasi) {
+            document.getElementById('justification_amali').innerText = res.amali.justifikasi;
+          }
+        } else {
+          resetAmaliForm();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // SEMAK & AMBIL MARKAH TERSIMPAN SECARA LIVE UNTUK SIMULASI
+    async function onPelajarSimulasiChange() {
+      const ag = document.getElementById('selectPelajarSimulasi').value;
+      const role = document.getElementById('evaluatorRole').value;
+      if (!ag) {
+        resetSimulasiForm();
+        return;
+      }
+
+      try {
+        const res = await apiGet('getMarkahSaved', { angkaGiliran: ag, role: role });
+        if (res && res.simulasi) {
+          document.getElementById('simHpp2').value = res.simulasi.hpp2;
+          document.getElementById('simHpp5').value = res.simulasi.hpp5;
+          document.getElementById('catatanSimulasi').value = res.simulasi.catatan || '';
+          calculateSimulasiScore();
+        } else {
+          resetSimulasiForm();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
     function updateAmaliRubric() {
       let s1 = parseFloat(document.querySelector('input[name="servis_f1"]:checked').dataset.score);
       let s2 = parseFloat(document.querySelector('input[name="servis_f2"]:checked').dataset.score);
@@ -1003,8 +1057,8 @@
       const roleLabels = document.querySelectorAll('.txtRoleDisplay');
       roleLabels.forEach(el => el.innerText = role === 'P1' ? 'Penilai 1' : 'Penilai 2');
 
-      resetAmaliForm();
-      resetSimulasiForm();
+      onPelajarAmaliChange();
+      onPelajarSimulasiChange();
     }
 
     function switchTab(tab) {
